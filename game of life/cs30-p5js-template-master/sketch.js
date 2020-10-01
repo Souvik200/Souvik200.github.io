@@ -4,15 +4,23 @@ let grid;
 let cellWidth;
 let cellHeight;
 const GRIDSIZE = 10;
+let autoPlay = false;
 function setup() {
   createCanvas(windowWidth, windowHeight);
   grid = generateRandomGrid(GRIDSIZE);
-  cellWidth = width / 10;
-  cellHeight = height / 10;
+  cellWidth = width / grid[0].length;
+  cellHeight = height / grid.length;
 }
 
 function draw() {
   background(220);
+
+  if (autoPlay) {
+    if (frameCount % 10 === 0) {
+      takeNextTurn();
+    }
+  }
+
   displayGrid();
 }
 
@@ -38,13 +46,16 @@ function toggleCell(cellX, cellY) {
 
 function keyPressed() {
   if (key === "r") {
-    grid = generateRandomGrid(10);
+    grid = generateRandomGrid(GRIDSIZE);
   }
   if (key === " ") {
     takeNextTurn();
   }
   if (key === "c") {
     grid = generateEmptyGrid(GRIDSIZE);
+  }
+  if (key === "a") {
+    autoPlay = !autoPlay;
   }
 }
 
@@ -83,15 +94,16 @@ function takeNextTurn() {
           nextTurn[y][x] = 1;
         }
       }
-    
     } 
   }
+
+  grid = nextTurn;
 }
 
 function displayGrid() {
   for (let y = 0; y<grid.length; y++) {
     for (let x = 0; x<grid[y].length; x++) {
-      if (grid[y][x] ===0) {
+      if (grid[y][x] === 0) {
         fill("white");
       }
       else {
@@ -101,13 +113,12 @@ function displayGrid() {
       rect(cellWidth*x, cellHeight*y, cellWidth, cellHeight);
     }
   }
-
 }
 function generateEmptyGrid(gridSize) {
   let grid = [];
   for (let i=0; i<gridSize; i++) {
     grid.push([]);
-    for (let j=0; j<10; j++) {
+    for (let j=0; j<GRIDSIZE; j++) {
       grid[i].push(0);
     }
   }
@@ -120,7 +131,7 @@ function generateRandomGrid(gridSize) {
   let grid = [];
   for (let i=0; i<gridSize; i++) {
     grid.push([]);
-    for (let j=0; j<10; j++) {
+    for (let j=0; j<GRIDSIZE; j++) {
       if (random(100) < 50) {
         grid[i].push(0);
       }
