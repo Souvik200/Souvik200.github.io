@@ -8,13 +8,19 @@
 let grid;
 let cellWidth;
 let cellHeight;
-const GRIDSIZE = 50;
-let playerX = 8;
-let playerY = 10;
+const GRIDSIZE = 15; 
+let playerX = 0;
+let playerY = 5;
 let end, thanos, startBackground, startButton; //pictures
 let startXCordinate, startYCordinate, StartWidth, startHeight;
 let state = "start";
 let inGame;
+let cellSize = 50;
+
+function preload() {
+  grid = loadStrings("assets/grids");
+  
+}
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -27,13 +33,23 @@ function setup() {
   StartWidth = windowWidth/10;
   startHeight = windowHeight/20;
 
-  grid = generateEmptyGrid(GRIDSIZE);
-
   //place player
   grid[playerY][playerX] = 9;
 
-  cellWidth = width / grid[0].length +50;
-  cellHeight = height / grid.length + 50;
+  cellWidth = width / grid[0].length;
+  cellHeight = height / grid.length;
+}
+
+// convert Level into 2d array
+for (let i=0; i<grid.length; i++) {
+  grid[i] = grid[i].split(",");
+}
+
+//loop through the whole 2d array, and turn everything to numbers
+for (let y=0; y<GRIDSIZE; y++) {
+  for (let x = 0; x<GRIDSIZE; x++) {
+    grid[y][x] = int(grid[y][x]);
+  }
 }
 
 function draw() {
@@ -47,49 +63,30 @@ function draw() {
 }
 
 function displayGrid() {
-  for (let y=0; y<grid.length; y++) {
-    for (let x=0; x<grid[y].length; x++) {
+  for (let y = 0; y < GRIDSIZE; y++) {
+    for (let x = 0; x < GRIDSIZE; x++) {
+
       if (grid[y][x] === 0) {
-        fill("white");
-      }
-      else if (grid[y][x] === 9) {
-        fill("red");
-      }
-      else {
-        fill("black");
+        fill(48,48,48);
       }
 
+      else if (grid[y][x] === 3) {
+        fill("red");
+      }
+
+      else if (grid[y][x] === 2){
+        fill(61,30,0);
+      }
+
+      else if (grid[y][x] === 1) {
+        fill(12,102,0);
+      }
       rect(cellWidth*x, cellHeight*y, cellWidth, cellHeight);
     }
   }
 }
 
-function generateEmptyGrid(gridSize) {
-  let grid = [];
-  for (let i=0; i<gridSize; i++) {
-    grid.push([]);
-    for (let j=0; j<gridSize; j++) {
-      grid[i].push(0);
-    }
-  }
-  return grid;
-}
 
-function generateRandomGrid(gridSize) {
-  let grid = [];
-  for (let i=0; i<gridSize; i++) {
-    grid.push([]);
-    for (let j=0; j<gridSize; j++) {
-      if (random(100) < 50) {
-        grid[i].push(0);
-      }
-      else {
-        grid[i].push(1);
-      }
-    }
-  }
-  return grid;
-}
 
 function start() {
   //inMenu = false;
