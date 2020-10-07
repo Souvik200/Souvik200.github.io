@@ -8,14 +8,14 @@
 let grid;
 let cellWidth;
 let cellHeight;
-const GRIDSIZE = 15; 
+const GRIDSIZEX = 15; 
+const GRIDSIZEY = 10;
 let playerX = 0;
 let playerY = 5;
 let end, thanos, startBackground, startButton; //pictures
 let startXCordinate, startYCordinate, StartWidth, startHeight;
 let state = "start";
 let inGame;
-let cellSize = 50;
 
 function preload() {
   grid = loadStrings("assets/grids");
@@ -36,35 +36,36 @@ function setup() {
   //place player
   grid[playerY][playerX] = 9;
 
-  cellWidth = width / grid[0].length;
-  cellHeight = height / grid.length;
-}
+  cellWidth = width / GRIDSIZEX;
+  cellHeight = height / GRIDSIZEY;
 
-// convert Level into 2d array
-for (let i=0; i<grid.length; i++) {
-  grid[i] = grid[i].split(",");
-}
+  // convert Level into 2d array
+  for (let i=0; i<grid.length; i++) {
+    grid[i] = grid[i].split(",");
+  }
 
-//loop through the whole 2d array, and turn everything to numbers
-for (let y=0; y<GRIDSIZE; y++) {
-  for (let x = 0; x<GRIDSIZE; x++) {
-    grid[y][x] = int(grid[y][x]);
+  //loop through the whole 2d array, and turn everything to numbers
+  for (let y=0; y<GRIDSIZEY; y++) {
+    for (let x = 0; x<GRIDSIZEX; x++) {
+      grid[y][x] = int(grid[y][x]);
+    }
   }
 }
 
 function draw() {
   background(220);
-  if (state === "start") {
-    start();
-  }
-  else if (state === "game") {
-    displayGrid();
-  }
+  displayGrid();
+  // if (state === "start") {
+  //   start();
+  // }
+  // else if (state === "game") {
+  //   displayGrid();
+  // }
 }
 
 function displayGrid() {
-  for (let y = 0; y < GRIDSIZE; y++) {
-    for (let x = 0; x < GRIDSIZE; x++) {
+  for (let y = 0; y < GRIDSIZEY; y++) {
+    for (let x = 0; x < GRIDSIZEX; x++) {
 
       if (grid[y][x] === 0) {
         fill(48,48,48);
