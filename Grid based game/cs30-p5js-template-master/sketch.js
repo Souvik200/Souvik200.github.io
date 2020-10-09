@@ -5,12 +5,12 @@
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
-let grid;
+let grid, levelPath;
 let cellWidth;
 let cellHeight;
 const GRIDSIZEX = 15; 
 const GRIDSIZEY = 10;
-let playerX = 0;
+let playerX = 14;
 let playerY = 5;
 let end, thanos, startBackground, startButton, canon; //pictures
 let startXCordinate, startYCordinate, StartWidth, startHeight;
@@ -21,11 +21,14 @@ let x, y, isDragging;
 
 function preload() {
   grid = loadStrings("assets/grids");
-  
+  levelPath = loadStrings("assets/levelPath");
 }
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+
+  movePlayer();
+  window.setInterval(movePlayer, 100);
 
   startBackground = loadImage("start.jpg");
   startButton = loadImage("startButton.jpg");
@@ -35,16 +38,12 @@ function setup() {
   startYCordinate = windowHeight - 40;
   StartWidth = windowWidth/10;
   startHeight = windowHeight/20;
-  canonXCordinate = windowWidth - (GRIDSIZEX-9);
-  canonYCordinate = windowHeight - 40;
-  canonWidth = windowWidth/10;
-  canonHeight = windowHeight/20;
-
-  //place player
-  grid[playerY][playerX] = 9;
-
   cellWidth = width / GRIDSIZEX;
   cellHeight = height / GRIDSIZEY;
+  canonXCordinate = windowWidth - windowWidth/1.11;
+  canonYCordinate = windowHeight - windowHeight/1.82;
+  canonWidth = cellWidth*3;
+  canonHeight = cellHeight*3;
 
   // convert Level into 2d array
   for (let i=0; i<grid.length; i++) {
@@ -57,17 +56,31 @@ function setup() {
       grid[y][x] = int(grid[y][x]);
     }
   }
+
+  // convert Level Path into 2d array
+  for (let i=0; i<levelPath.length; i++) {
+    levelPath[i] = levelPath[i].split(",");
+  }
+
+  //loop through the whole 2d array, and turn everything to numbers
+  for (let y = 0; y<GRIDSIZEY; y++) {
+    for (let x = 0; x<GRIDSIZEX; x++) {
+      levelPath[y][x] = int(levelPath[y][x]);
+    }
+  }
 }
 
 function draw() {
   background(220);
   displayGrid();
+  moveRectangle();
   // if (state === "start") {
   //   start();
   // }
   // else if (state === "game") {
   //   displayGrid();
   // }
+  canonShooter();
 }
 
 function displayGrid() {
@@ -77,8 +90,6 @@ function displayGrid() {
       if (grid[y][x] === 0) {
         fill(48,48,48);
         rect(cellWidth*x, cellHeight*y, cellWidth, cellHeight);
-        imageMode(CENTER);
-        image(canon, canonXCordinate, y, cellWidth*2, cellHeight*2);
       }
 
       else if (grid[y][x] === 3) {
@@ -123,6 +134,11 @@ function mousePressed() {
   }
 }
 
+function canonShooter(){
+  imageMode(CENTER);
+  image(canon, canonXCordinate, canonYCordinate, canonWidth, canonHeight);
+}
+
 function isMouseInsideRect() {
   return mouseX > startXCordinate &&
          mouseX < startXCordinate + StartWidth &&
@@ -135,16 +151,28 @@ function mouseReleased() {
 }
 
 function isMouseInsideCanon() {
-  return mouseX > x &&
-         mouseX < x + cellWidth*2 &&
-         mouseY > y &&
-         mouseY < y + cellHeight*2;
+  return mouseX > canonXCordinate &&
+         mouseX < canonXCordinate + canonWidth &&
+         mouseY > canonYCordinate &&
+         mouseY < canonYCordinate + canonHeight;
 }
 
 function moveRectangle() {
   // move rectangle if required
   if (isDragging) {
-    x = mouseX - cellWidth;
-    y = mouseY - cellHeight;
+    canonXCordinate = mouseX - canonWidth/2;
+    canonYCordinate = mouseY - canonHeight/2;
+  }
+}
+
+function movePlayer() {
+  for (let y = 0; y < GRIDSIZEY; y++) {
+    for (let x = 0; x < GRIDSIZEX; x++) {
+      if (levelPath[playerY][playerX - 1] === 3) {
+        //grid[playerY][playerX] = 2; //resetting players current location to white
+        playerX -= 1;
+        grid[playerY][playerX] = levelPath[playerY][playerX]; //set new location to red
+      }
+    }
   }
 }

@@ -13,7 +13,7 @@ let levelPath;
 let loadLevel = 1;
 
 let playerX = 0;
-let playerY = 4;
+let playerY = 1;
 
 function preload() {
   level = loadStrings("assets/" + loadLevel + "level.txt");
@@ -24,7 +24,7 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
 
   movePlayer();
-  window.setInterval(movePlayer, 500);
+  window.setInterval(movePlayer, 5000);
 
   // convert Level into 2d array
   for (let i=0; i<level.length; i++) {
